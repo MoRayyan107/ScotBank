@@ -1,0 +1,606 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap");
+
+:root {
+    /* Colors */
+    --text-primary: #fff;
+    --text-secondary: #333;
+    --border-color: rgba(255, 255, 255, 0.2);
+    --shadow-color: rgba(0, 0, 0, 0.2);
+    --btn-bg: white;
+    --error-bg: rgba(255, 0, 0, 0.1);
+    --success-bg: rgba(0, 255, 0, 0.1);
+    --transaction-bg: rgba(255, 255, 255, 0.1);
+    --card-bg: rgba(255, 255, 255, 0.15);
+
+    /* Sizes */
+    --border-radius-lg: 40px;
+    --border-radius-sm: 10px;
+    --spacing-sm: 20px;
+    --spacing-md: 30px;
+    --spacing-lg: 40px;
+
+    /* Effects */
+    --blur-amount: 20px;
+}
+
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+
+
+
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    background: #111111 url(https://www.inspiringtravelscotland.com/wp-content/uploads/2019/05/Quiraing-Skye-Scottish-Highlands.jpg) no-repeat;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    color: var(--text-primary);
+    padding: var(--spacing-md);
+}
+
+/* Container styles */
+.content-wrapper {
+    width: 90%;
+    max-width: 800px;
+    background: transparent;
+    border: 2px solid var(--border-color);
+    backdrop-filter: blur(var(--blur-amount));
+    box-shadow: 0 0 10px var(--shadow-color);
+    border-radius: var(--border-radius-sm);
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+}
+
+/* Header styles */
+h1 {
+    font-size: 32px;
+    text-align: center;
+    margin-bottom: var(--spacing-sm);
+}
+
+h2 {
+    font-size: 24px;
+    margin: var(--spacing-sm) 0;
+}
+
+h3 {
+    font-size: 18px;
+    margin-bottom: 15px;
+}
+
+h4 {
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+ul {
+    list-style-type: none;
+}
+
+/* Account info */
+.account-info {
+    text-align: center;
+    margin-bottom: var(--spacing-md);
+}
+
+.account-id {
+    margin-bottom: 10px;
+    font-size: 16px;
+    opacity: 0.8;
+}
+
+.balance {
+    font-size: 32px;
+    font-weight: 700;
+    margin: 15px 0;
+}
+
+/* Button styles */
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: var(--border-radius-lg);
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    margin: 5px;
+}
+
+/* Round Up Reclamation Button Styling*/
+.reclaim-container {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.3s ease-in-out;
+    margin-top: 1rem;
+}
+
+.reclaim-container.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.reclaim-button {
+    background: linear-gradient(45deg, #4CAF50, #45a049);
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.reclaim-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+}
+
+.reclaim-button:active {
+    transform: scale(0.95);
+}
+
+.sparkle {
+    display: inline-block;
+    animation: sparkle 1.5s infinite;
+    opacity: 0.7;
+}
+
+@keyframes sparkle {
+    0% { opacity: 0.7; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.2); }
+    100% { opacity: 0.7; transform: scale(1); }
+}
+
+@keyframes reclaimAnimation {
+    0% { transform: scale(1); }
+    50% { transform: scale(0.95); }
+    100% { transform: scale(1); }
+}
+
+/* Round-up pot styles */
+.roundup-toggle-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin: 5px 0 12px 0;
+}
+
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 30px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.1);
+    transition: .4s;
+    border-radius: 30px;
+    border: 1px solid var(--border-color);
+}
+
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 22px;
+    width: 22px;
+    left: 4px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .toggle-slider {
+    background-color: rgba(0, 255, 0, 0.2);
+}
+
+input:checked + .toggle-slider:before {
+    transform: translateX(29px);
+}
+
+.toggle-status {
+    font-weight: 600;
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 14px;
+    min-width: 70px;
+    text-align: center;
+    transition: background-color 0.3s;
+}
+
+.roundup-pot {
+    background-color: var(--transaction-bg);
+    border-radius: var(--border-radius-sm);
+    padding: 15px;
+    margin: 15px 0;
+    text-align: center;
+    border: 1px solid var(--border-color);
+}
+
+.roundup-title {
+    font-size: 16px;
+    opacity: 0.9;
+    margin-bottom: 5px;
+}
+
+.roundup-balance {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 5px 0;
+}
+
+.btn-primary {
+    background-color: var(--btn-bg);
+    color: var(--text-secondary);
+}
+
+.btn-primary:hover {
+    background-color: #f0f0f0;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Action buttons container */
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: var(--spacing-sm) 0;
+}
+
+/* Transaction form styles */
+.transaction-form {
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.transaction-form h1 {
+    margin-bottom: var(--spacing-md);
+}
+
+.transaction-form form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: var(--spacing-md);
+}
+
+.transaction-form label {
+    margin-right: 10px;
+    font-weight: 500;
+}
+
+.transaction-form input[type="number"] {
+    padding: 10px 15px;
+    background: transparent;
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    color: var(--text-primary);
+    font-size: 16px;
+    width: 200px;
+}
+
+.transaction-form input[type="submit"] {
+    padding: 10px 25px;
+    background: var(--btn-bg);
+    color: var(--text-secondary);
+    border: none;
+    border-radius: var(--border-radius-lg);
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.transaction-form input[type="submit"]:hover {
+    background-color: #f0f0f0;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Logout link */
+a {
+    display: inline-block;
+    color: var(--text-primary);
+    text-decoration: none;
+    margin: 10px 0;
+    transition: all 0.3s ease;
+}
+
+a:hover {
+    text-decoration: underline;
+    opacity: 0.8;
+}
+
+/* Message styling */
+p[style*="color: red"], p[style*="color: green"] {
+    margin: 15px 0;
+    padding: 10px;
+    border-radius: var(--border-radius-sm);
+    text-align: center;
+    font-size: 14px;
+    width: 100%;
+}
+
+p[style*="color: red"] {
+    background-color: var(--error-bg);
+    border: 1px solid rgba(255, 0, 0, 0.3);
+    color: #ff3333 !important;
+}
+
+p[style*="color: green"] {
+    background-color: var(--success-bg);
+    border: 1px solid rgba(0, 255, 0, 0.3);
+    color: #00cc00 !important;
+}
+
+/* Transaction history */
+.transactions-section,
+.rewards-section{
+    width: 100%;
+    margin-top: var(--spacing-md);
+}
+
+.transaction, .account, .reward {
+    background-color: var(--transaction-bg);
+    border-radius: var(--border-radius-sm);
+    list-style-type: none;
+    padding: 15px;
+    margin: 15px 0;
+}
+
+.transaction ul {
+    list-style-type: none;
+}
+
+.transaction p {
+    margin: 5px 0;
+    list-style-type: none;
+}
+.transaction li {
+    list-style-type: none;
+}
+
+hr {
+    border-color: var(--border-color) !important;
+    opacity: 0.5;
+    margin: 20px 0;
+}
+
+/* Insights Section Styles */
+.insights-section {
+    width: 100%;
+    margin-top: var(--spacing-lg);
+}
+
+.insights-container {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    margin-top: var(--spacing-sm);
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+.insights-text, .insights-graph {
+    flex: 1;
+    min-width: 300px;
+    background-color: var(--transaction-bg);
+    border-radius: var(--border-radius-sm);
+    padding: 20px;
+    border: 1px solid var(--border-color);
+}
+
+.insight-card {
+    background-color: var(--card-bg);
+    border-radius: var(--border-radius-sm);
+    padding: 15px;
+    border: 1px solid var(--border-color);
+    margin: 15px 0;
+    width: 100%;
+}
+
+.insight-card p {
+    margin: 8px 0;
+}
+
+.category-container, .spenders-counts {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-md);
+}
+
+.category-item, .sanctioned-report-item {
+    justify-content: space-between;
+    padding: 5px 0;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.category-item:last-child {
+    border-bottom: none;
+}
+
+.business-details {
+    flex-grow: 1;
+    margin-right: 15px;
+}
+
+.business-details p {
+    margin: 5px 0;
+    font-size: 14px;
+}
+
+.business-transactions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    text-align: right;
+}
+
+.business-transactions p {
+    margin: 5px 0;
+    font-size: 14px;
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 2px 8px;
+    border-radius: 12px;
+}
+
+.category-list, .spenders-container {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    flex-grow: 1;
+}
+
+
+.category-list-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;
+    gap: 20px;
+    width: 100%;
+}
+.spender-postcode, .spender-amount {
+    text-align: right; /* Right-align postcode and amount */
+    margin-left: 10px; /* Adds some space between the name and the right-aligned text */
+}
+
+
+.spender-name {
+    flex-grow: 1; /* Ensures the name takes up the remaining space */
+}
+
+.category-name,
+.spender-name,
+.spender-postcode {
+    font-weight: 500;
+}
+
+.spender-postcode {
+    text-align: left;
+    margin-left: 10px;
+    flex-shrink: 0;
+}
+
+.spender-amount {
+    text-align: right; /* Right-align the amount */
+    margin-left: 10px; /* Adds space between the postcode and the amount */
+}
+
+.category-count,
+.category-sum,
+.spender-amount {
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 2px 8px;
+    border-radius: 12px;
+}
+
+#top-spenders-map {
+    flex-grow: 1; /* Ensures the map takes up the remaining free space */
+    height: 100%;
+}
+
+.chart-container, .maps-container {
+    flex-grow: 1;
+    background-color: var(--card-bg);
+    border-radius: var(--border-radius-sm);
+    margin-bottom: 15px;
+    margin-left: 20px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border-color);
+    height: 100%;
+    min-width: 300px;
+}
+
+.pie-chart-container {
+    width: 100%;
+    height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Accessibility Styling */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .content-wrapper {
+        width: 95%;
+        padding: 15px;
+    }
+
+    h1 {
+        font-size: 24px;
+    }
+
+    .balance {
+        font-size: 24px;
+    }
+
+    .transaction-form input[type="number"] {
+        width: 150px;
+    }
+
+    .insights-container {
+        flex-direction: column;
+    }
+
+    .insights-text, .insights-graph {
+        width: 100%;
+    }
+
+    .category-container, .spenders-counts {
+        flex-direction: column; /* Stacks the items on smaller screens */
+        align-items: center; /* Centers the content */
+    }
+
+
+}

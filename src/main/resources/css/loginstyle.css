@@ -1,0 +1,163 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap");
+
+:root {
+    /* Colors */
+    --text-primary: #fff;
+    --text-secondary: #333;
+    --border-color: rgba(255, 255, 255, 0.2);
+    --shadow-color: rgba(0, 0, 0, 0.2);
+    --btn-bg: white;
+    --error-bg: rgba(255, 0, 0, 0.1);
+    --success-bg: rgba(0, 255, 0, 0.1);
+    /* Sizes */
+    --border-radius-lg: 40px;
+    --border-radius-sm: 10px;
+    --spacing-sm: 20px;
+    --spacing-md: 30px;
+    --spacing-lg: 40px;
+
+    /* Effects */
+    --blur-amount: 20px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: #111111 url(https://www.inspiringtravelscotland.com/wp-content/uploads/2019/05/Quiraing-Skye-Scottish-Highlands.jpg) no-repeat;
+    background-size: cover;
+    background-position: center;
+}
+
+.wrapper {
+    width: 420px;
+    background: transparent;
+    border: 2px solid var(--border-color);
+    backdrop-filter: blur(var(--blur-amount));
+    box-shadow: 0 0 10px var(--shadow-color);
+    color: var(--text-primary);
+    border-radius: var(--border-radius-sm);
+    padding: var(--spacing-md) var(--spacing-lg);
+    text-align: center;
+}
+
+.wrapper h1 {
+    font-size: 36px;
+    text-align: center;
+    margin-bottom: var(--spacing-sm);
+    background: transparent;
+}
+
+.wrapper .input-box {
+    position: relative;
+    width: 100%;
+    height: 50px;
+    background: transparent;
+    margin: var(--spacing-md) 0;
+}
+
+.input-box input {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    border: 2px solid var(--border-color);
+    border-radius: var(--border-radius-lg);
+    font-size: 16px;
+    padding: var(--spacing-sm) 45px var(--spacing-sm) var(--spacing-sm);
+    color: var(--text-primary);
+}
+
+.input-box input::placeholder {
+    color: var(--text-primary);
+    opacity: 0.7;
+}
+
+.input-box i {
+    position: absolute;
+    right: var(--spacing-sm);
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 20px;
+}
+
+.wrapper .btn {
+    width: 100%;
+    height: 45px;
+    background: var(--btn-bg);
+    border: none;
+    outline: none;
+    border-radius: var(--border-radius-lg);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    font-size: 16px;
+    color: var(--text-secondary);
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.wrapper .btn:hover {
+    background-color: #f0f0f0;
+    transform: translateY(-2px);
+}
+
+/* Link styling */
+.wrapper a {
+    background: transparent;
+    text-align: center;
+    margin-top: 15px;
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.wrapper a:hover {
+    text-decoration: underline;
+    opacity: 0.8;
+}
+
+/* Message styling */
+.message {
+    margin-top: var(--spacing-sm);
+    padding: 10px;
+    border-radius: var(--border-radius-sm);
+    text-align: center;
+    font-size: 14px;
+}
+
+.error {
+    background-color: var(--error-bg);
+    border: 1px solid rgba(255, 0, 0, 0.3);
+    color: #ff3333;
+}
+
+.success {
+    background-color: var(--success-bg);
+    border: 1px solid rgba(0, 255, 0, 0.3);
+    color: #00cc00;
+}
+
+/* Media queries */
+@media (max-width: 480px) {
+    .wrapper {
+        width: 90%;
+        padding: var(--spacing-sm);
+    }
+
+    .wrapper h1 {
+        font-size: 28px;
+    }
+
+    .input-box input {
+        padding: 15px 40px 15px 15px;
+    }
+}

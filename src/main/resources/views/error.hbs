@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{errorTitle}}</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div class="content-wrapper error-container">
+    <h1>{{errorTitle}}</h1>
+    <div class="error-code">{{errorCode}}</div>
+
+    {{#if errorMessage}}
+        <p class="error-message">{{errorMessage}}</p>
+    {{/if}}
+
+    {{#if errorSuggestion}}
+        <p class="error-suggestion">{{errorSuggestion}}</p>
+    {{/if}}
+
+    <div class="error-actions">
+        <a href="/" class="btn btn-primary">Return to Home</a>
+    </div>
+</div>
+</body>
+</html>

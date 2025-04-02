@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manager Dashboard</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key={{api-maps-key}}&callback=initMap" async defer></script>
+    <script src="/mapEmbed.js"></script>
+</head>
+<body>
+<div class="content-wrapper">
+    <h1>Welcome, {{managername}}</h1>
+
+    <div class="account-info">
+        <p class="account-id">Manager ID: {{managerid}}</p>
+    </div>
+
+    <nav class="action-buttons">
+        <button type="button" class="btn btn-primary" onclick="window.location.href = '/logout'">Logout</button>
+        <button type="button" class="btn btn-primary" onclick="scrollToInsights()">Insights</button>
+    </nav>
+
+    {{#if success}}
+        <p style="color: green">{{success}}</p>
+    {{/if}}
+    {{#if error}}
+        <p style="color: red">{{error}}</p>
+    {{/if}}
+
+    {{#if hasaccounts}}
+        <div class="accounts-section">
+            <h2>Managed Accounts</h2>
+            <hr>
+            <nav class="pagination" style="display: flex; justify-content: center; margin: 20px 0;">
+
+                {{#if pagination.hasPrev}}
+                    <a href="?page={{decrement pagination.currentPage}}" class="btn btn-primary" style="margin: 0 5px;">&laquo; Previous</a>
+                {{else}}
+                    <button class="btn btn-secondary" disabled style="margin: 0 5px;">&laquo; Previous</button>
+                {{/if}}
+
+                <span style="margin: 0 10px; line-height: 38px;">Page {{pagination.currentPage}} of {{pagination.totalPages}}</span>
+
+                {{#if pagination.hasNext}}
+                    <a href="?page={{increment pagination.currentPage}}" style="margin: 0 5px;" class="btn btn-primary">Next &raquo;</a>
+                {{else}}
+                    <button class="btn btn-secondary" disabled style="margin: 0 5px;">Next &raquo;</button>
+                {{/if}}
+            </nav>
+            {{#each accounts}}
+                <ul class="account">
+                    <li><strong>Account ID: </strong>{{accountid}}</li>
+                    <li><strong>Name: </strong>{{name}}</li>
+                    <li><strong>Balance: </strong>£{{balance}}</li>
+                    <li><strong>Card Number: </strong>{{cardnumber}}</li>
+                    <li><strong>CVV: </strong>{{cardcvv}}</li>
+                </ul>
+            {{/each}}
+        </div>
+
+        <!-- Insights Section Wrapper -->
+        <div class="insights-section" id="insights">
+            <h2>Spending Insights: Top Spenders</h2>
+            <hr>
+            <div class="insights-container">
+                <div class="insight-card">
+                    <h3>Top Ten Spenders by Total Amount</h3>
+                    <div class="category-container">
+                        {{#if hasbigspenders}}
+                            <div class="category-list-container">
+                                <div class="category-list">
+                                    {{#each bigspenders}}
+                                        <ul class="category-item">
+                                            <li class="spender-name">{{Name}}:</li>
+                                            <li class="spender-postcode">({{Postcode}})</li>
+                                            <li class="spender-amount">£{{TotalAmount}}</li>
+                                        </ul>
+                                    {{/each}}
+                                </div>
+                                    <!-- Single map with ten markers -->
+                                <div id="top-spenders-map" style="width: 100%; height: 100%;">
+                                </div>
+                            </div>
+                        {{else}}
+                            <p>No spending data available.</p>
+                        {{/if}}
+                    </div>
+                </div>
+                <div class="insight-card">
+                    <h3>Sanctioned Business Reports</h3>
+                    <div class="category-container">
+                        {{#if hassanctionedbusinesses}}
+                            <div class="category-list-container">
+                                {{#each sanctionedbusinesses}}
+                                    <ul class="sanctioned-report-item">
+                                        <li class="business-details">
+                                            <p><strong>Business:</strong> {{businessName}} ({{businessId}})</>
+                                            <p><strong>Category:</strong> {{category}}</p>
+                                        </li>
+                                        <li class="business-transactions">
+                                            <p><strong>Total:</strong> £{{totalAmount}}</p>
+                                            <p><strong>Transactions:</strong> {{totalTransactions}} (✓<span style="color:green;">{{acceptedTransactions}}</span> | <span style="color:red;">✗{{rejectedTransactions}}</span>)</p>
+                                        </li>
+                                    </ul>
+                                    <hr>
+                                {{/each}}
+                            </div>
+                        {{else}}
+                            <p>No sanctioned business reports available.</p>
+                        {{/if}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {{else}}
+        <p>No accounts found</p>
+    {{/if}}
+</div>
+<script>
+    // Smooth scroll function without updating URL
+    function scrollToInsights() {
+        const insightsSection = document.getElementById('insights');
+        if (insightsSection) {
+            insightsSection.scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rewards</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.2/dist/gsap.min.js"></script>
+    <style>
+        #wheelCanvas {
+            margin: 30px auto;
+            display: block;
+            background-color: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            border: 4px solid #007bff;
+        }
+
+        .reward-result {
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-top: 20px;
+            color: #28a745;
+        }
+
+        .spin-section h2 {
+            text-align: center;
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        .spin-section button {
+            display: block;
+            margin: 0 auto;
+            font-size: 1.1rem;
+            padding: 10px 20px;
+        }
+    </style>
+</head>
+<body>
+<div class="content-wrapper">
+    <h1>Welcome to the Rewards Program</h1>
+    <nav class="action-buttons">
+        <button type="button" class="btn btn-primary" onclick="window.location.href='/account'">Back to Account</button>
+        <button type="button" class="btn btn-primary" onclick="window.location.href='/logout'">Log out</button>
+    </nav>
+
+    {{#if success}}
+        <p style="color: green">{{success}}</p>
+    {{/if}}
+    {{#if error}}
+        <p style="color: red">{{error}}</p>
+    {{/if}}
+
+    <!-- Rewards List -->
+    <div class="rewards-section">
+        <h2>Available Rewards</h2>
+        <hr>
+        {{#each rewards}}
+        <ul class="reward">
+            <li><strong>Name: </strong>{{name}}</li>
+            <li><strong>Description: </strong>{{description}}</li>
+            <li><strong>Value: £</strong>{{value}}</li>
+            <li><strong>Chance: </strong>{{chance}}%</li>
+        </ul>
+        {{/each}}
+    </div>
+
+    <!-- Spin the Wheel Section -->
+    <div class="spin-section">
+        <h2>🎡 Spin the Wheel</h2>
+        <canvas id="wheelCanvas" width="400" height="400"></canvas>
+        <p id="result" class="reward-result"></p>
+        <form id="spinForm">
+            <button type="submit" class="btn btn-success">Spin Now</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    const canvas = document.getElementById("wheelCanvas");
+    const ctx = canvas.getContext("2d");
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const radius = 180;
+
+    const rewards = [
+        {{#each rewards}}
+            "{{this.name}}"{{#unless @last}},{{/unless}}
+        {{/each}}
+    ];
+
+    const segmentAngle = 2 * Math.PI / rewards.length;
+    let rotation = -Math.PI / 2;
+    let spinning = false;
+
+    function drawWheel() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        rewards.forEach((reward, i) => {
+            const angle = segmentAngle * i + rotation;
+
+            // Segment shape
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.arc(centerX, centerY, radius, angle, angle + segmentAngle);
+            ctx.closePath();
+
+            // Fill segment
+            ctx.fillStyle = i % 2 === 0 ? "#7dc3a6" : "#7da0c3";
+            ctx.fill();
+
+            // Draw white border around arc
+            ctx.strokeStyle = "#fff";
+            ctx.lineWidth = 6;
+            ctx.stroke();
+
+            // Segment text
+            ctx.save();
+            ctx.translate(centerX, centerY);
+            ctx.rotate(angle + segmentAngle / 2);
+            ctx.textAlign = "right";
+            ctx.fillStyle = "#fff";
+            ctx.font = "bold 20px sans-serif";
+            ctx.shadowColor = "rgba(0, 0, 0, 0.4)";
+            ctx.shadowBlur = 6;
+            ctx.shadowOffsetX = 3;
+            ctx.shadowOffsetY = 3;
+            ctx.fillText(reward, radius - 10, 5);
+            ctx.restore();
+        });
+
+        // Arrow / Pointer
+        ctx.beginPath();
+        ctx.moveTo(canvas.width - 10, centerY);
+        ctx.lineTo(canvas.width, centerY - 10);
+        ctx.lineTo(canvas.width, centerY + 10);
+        ctx.closePath();
+        ctx.fillStyle = "#007bff";
+        ctx.fill();
+    }
+
+    drawWheel();
+
+    document.getElementById("spinForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+        if (spinning) return;
+        spinning = true;
+
+        // Get selected reward from backend
+        fetch("/account/reward/api", {method: "POST"})
+                .then(res => res.json())
+                .then(data => {
+                    const rewardName = data.reward;
+                    const segmentIndex = rewards.findIndex(r => r === rewardName);
+
+                    if (segmentIndex === -1) {
+                        throw new Error("Reward not found in rewards list");
+                    }
+
+                    const targetAngle = (segmentIndex + 0.5) * segmentAngle;
+                    const totalSpins = 5;
+                    const stopAt = 2 * Math.PI * totalSpins + (2 * Math.PI - targetAngle);
+
+                    const duration = 3000;
+                    const start = performance.now();
+
+                    function animate(now) {
+                        const elapsed = now - start;
+                        const progress = Math.min(elapsed / duration, 1);
+                        const ease = 1 - Math.pow(1 - progress, 3);
+
+                        rotation = stopAt * ease;
+                        drawWheel();
+
+                        if (progress < 1) {
+                            requestAnimationFrame(animate);
+                        } else {
+                            spinning = false;
+                            document.getElementById("result").innerText = `You won: ${rewardName}`;
+                        }
+                    }
+
+                    requestAnimationFrame(animate);
+                })
+
+                .catch(() => {
+                    spinning = false;
+                    document.getElementById("result").innerText = "Something went wrong. Please try again.";
+                });
+    });
+</script>
+</body>
+</html>

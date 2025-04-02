@@ -1,0 +1,90 @@
+\documentclass{article}
+\usepackage[colorlinks=true, linkcolor=blue, citecolor=red, urlcolor=blue, filecolor=magenta]{hyperref}
+\usepackage{listings}
+
+\lstset{
+	basicstyle=\ttfamily\small,
+	keywordstyle=\bfseries,
+	frame=single,
+	breaklines=true,
+	captionpos=b
+}
+
+\title{The Case for Cloud Migration}
+\author{Team 5}
+\date{March 21, 2025}
+\begin{document}
+	\maketitle
+	\par Just as any global bank, real, or otherwise, would experience, a vast amount of extremely sensitive fiscal data must be sifted through constantly and at great rates. For this reason, amongst others, we propose the \textit{fully cloud native private cloud} approach to cloud migration. We detail four points of reasoning below. As well as that, we outline how we would handle migration internally.
+	\section{Benefits of Cloud Migration}
+	\subsection{Scalability \& Server Hammering}
+	\par Currently, our bank is being run off a local machine, often a laptop (the creative reader may be able to suspend their disbelief and consider it as a server). At some point, the number of transactions in the system will exceed the storage space of that laptop (or server).
+	\par Similarly, the variable rate of transactions could possibly cause some asynchronous problems relating to reading/ writing to databases, which may lead to very unhappy customers.
+	\par Outsourcing database and server concerns to a cloud provider mitigate these risks. It allows the dynamic allocation of server overhead at almost instantaneous speed.
+	\subsection{Endurance \& Quick Deployment}
+	\par Our banking app in its current state is only active as long as the local machine is active. This, by itself is an extremely lousy and short-sighted approach for a worldwide service. A single hardware failure, power outage, system crash can cause the entire service to grind to a halt.
+	\par This single point of failure, obviously, is not acceptable for a banking service. By migrating server processing to a cloud provider, we can eliminate this vulnerability and ensure continuous availability.
+	\subsection{Security}
+	\par Cloud providers offer a large suite of security features that surpass what can reasonably be implemented on a local machine. These include but are not limited to:
+	\subsubsection{Data Encryption}
+	\par Cloud providers implement encryption both in transit and at rest. This ensures that even if data is intercepted during communication or compromised at its storage location, it remains unreadable to unauthorised entities.
+	\subsubsection{DDoS Protection}
+	\par Please see \hyperref[sec:mitigatingddos]{Mitigating DDoS Attacks}.
+	\subsubsection{Automated Security Patching}
+	\par Traditional on-premise servers require manual updates and security patching, which may introduce vulnerabilities if neglected. Cloud providers continuously monitor security threats and apply patches automatically, reducing the attack surface and eliminating known exploits in a timely manner.
+	\subsubsection{Intrusion Detection \& Threat Monitoring}
+	\par Cloud environments often include real-time monitoring tools, which analyse network traffic, detect anomalies, and alert administrators about potential security incidents, allowing for rapid response and mitigation.
+	\par By leveraging these cloud security benefits, our banking service can achieve a higher level of protection compared to a self-hosted solution, ensuring customer data integrity, confidentiality, and availability.
+	\subsection{Load Balancing}
+	\par A crucial component of cloud infrastructure is load balancing, which distributes incoming traffic across multiple servers to prevent overload and ensure high availability. This is particularly important for banking services, where downtime or slow response times can severely impact user experience and trust.
+	\subsubsection{Mitigating DDoS Attacks}
+	\label{sec:mitigatingddos}
+	\par One major benefit of cloud-based load balancing is its role in mitigating Distributed Denial of Service (DDoS) attacks. These attacks attempt to overwhelm a system with an excessive number of requests, leading to service degradation or failure. Cloud providers implement DDoS protection through:
+	\begin{itemize}
+		\item \textbf{Traffic Filtering:} Identifying and blocking malicious traffic patterns before they reach application servers.
+		\item \textbf{Rate Limiting:} Restricting excessive requests from single sources to prevent flooding.
+		\item \textbf{Global Anycast Networks:} Distributing traffic across multiple data centres to absorb attack volumes.
+	\end{itemize}
+	\par By integrating DDoS protection with load balancing, cloud providers ensure that legitimate requests are always processed efficiently while malicious traffic is minimised.
+	\subsubsection{Performance Optimisation}
+	\par Load balancers dynamically allocate resources based on real-time traffic demand, preventing bottlenecks and ensuring smooth operation. They also support:
+	\begin{itemize}
+		\item \textbf{Auto-scaling:} Automatically provisioning additional resources as needed.
+		\item \textbf{Health Monitoring:} Detecting and re-routing traffic away from unhealthy instances.
+		\item \textbf{Geographic Distribution:} Routing users to the nearest data centre for reduced latency.
+	\end{itemize}
+	\par Implementing cloud-based load balancing not only enhances security but also optimises performance and reliability, making it a fundamental component of a cloud-native banking solution.
+	\section{The Migration to the Cloud}
+	\par Considering the sensitive nature of the data we must manipulate, we propose a \textit{private cloud} approach.We appreciate the possible benefits of a \textit{hybrid cloud}, particularly its scalability and more integrated telemetry features. However, given the current projected scale of the app and the need for control over sensitive data, we believe a private cloud offers the right balance of flexibility and security for our use case.
+	\par While private clouds can be scaled to meet demands, they require proactive management, such as provisioning hardware and ensuring that capacity grows as needed. Public clouds, on the other hand, offer automated scaling with minimal intervention, which may be a benefit as our app grows in scale.
+	\par In a private cloud, while we retain full control over security measures, we also take on the responsibility of implementing and maintaining encryption, DDoS mitigation, patching, and intrusion detection. This may require more resources and expertise compared to using a managed public cloud service.
+	\par One consideration for using a private cloud is the potential for higher initial setup and maintenance costs. In contrast, public clouds operate on a pay-as-you-go model, which can reduce initial costs and increase flexibility as the app scales.
+	\par As already mentioned, we would employ the \textit{fully cloud native} approach. This means following the \href{https://developer.ibm.com/articles/creating-a-12-factor-application-with-open-liberty}{12-factor applications} for creating cloud native applications.
+	\par Due to the modularity and loose coupling of our codebase, we believe transitioning to cloud would be fairly painless. The following is a non-exhaustive list of cloud appropriate applications for our bank.
+	\begin{itemize}
+		\item Currently, all transaction and account data is received via API into a local database on every new instance of the app. That can easily be uprooted into a cloud handled database. 
+		\item Instead of having a local database handlers, we can create database queries through some API, and switch the back-end wiring to call the cloud API, instead of the local function. Consider the following two functions:
+		\begin{lstlisting}
+function DisplayAllTransactionsUsingLocalDB() 
+{
+  Transactions = localDatabase.getAllTransactions()
+  Create new Page
+  Load Transactions onto Page
+  Render Page
+}
+
+function DisplayAllTransactionsUsingCloudAPI() 
+{
+  Transactions = remoteApi.getAllTransactions()
+  Create new Page
+  Load Transactions onto Page
+  Render Page
+}
+\end{lstlisting}
+	Due to the loosely coupled nature of our codebase, we would be able to simply change the data source from local to cloud whilst keeping the logic the exact same.
+	\item A cloud based logger, or ledger, would be available for use, allowing for an immutable history of transactions.
+	\item Telemetry (e.g., user spending habits) in a private cloud allows full control over the data collection process, its processing, and its storage location.
+	\end{itemize}
+
+	
+\end{document}

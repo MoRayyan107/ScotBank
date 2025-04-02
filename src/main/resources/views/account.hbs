@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <script src="/transaction-chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+</head>
+<body>
+
+<div class="content-wrapper">
+    <h1>Welcome, {{name}}</h1>
+
+    <div class="account-info">
+        <p class="account-id">Account ID: {{accountid}}</p>
+        <p>Card Number: {{cardnumber}}</p>
+        <p>CVV: {{cardcvv}}</p>
+        <h1 class="balance">£{{balance}}</h1>
+        <div class="roundup-pot">
+            <div class="roundup-toggle-container">
+                <h2 class="roundup-title">Round-Up Transactions</h2>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="roundUpToggle"{{#if roundUpEnabled}}checked{{/if}}>
+                    <span class="toggle-slider"></span>
+                    <span class="sr-only">Toggle Round-Up Transactions feature</span>
+                </label>
+                <p class="toggle-status">Disabled</p>
+            </div>
+            <p class="roundup-title">Round-Up Savings Pot 🍯</p>
+            <h2 class="roundup-balance" role="text">{{roundUpBalance}}</h2>
+            <div class="reclaim-container" id="reclaimContainer">
+                <button class="reclaim-button" id="reclaimButton">
+                    <span class="sparkle">✨</span>
+                    Reclaim Round-Up
+                    <span class="sparkle">✨</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <nav class="action-buttons" role="Navigation">
+        <button type="button" class="btn btn-primary" onclick="window.location.href='account/deposit'">Deposit</button>
+        <button type="button" class="btn btn-primary" onclick="window.location.href='account/withdraw'">Withdrawal
+        </button>
+        <button type="button" class="btn btn-primary" onclick="scrollToInsights()">Insights</button>
+        <button type="button" class="btn btn-primary" onclick="window.location.href='account/reward'">Rewards</button>
+        <button type="button" class="btn btn-primary" onclick="window.location.href='/logout'">Log out</button>
+    </nav>
+
+    {{#if success}}
+        <p style="color: green">{{success}}</p>
+    {{/if}}
+    {{#if error}}
+        <p style="color: red">{{error}}</p>
+    {{/if}}
+
+    {{#if hastransactions}}
+        <div class="transactions-section">
+            <h2>Transaction History</h2>
+            <hr>
+            <nav class="pagination" style="display: flex; justify-content: center; margin: 20px 0;" aria-label=" Navigation through Transaction History">
+
+                {{#if pagination.hasPrev}}
+                    <a href="?page={{decrement pagination.currentPage}}" class="btn btn-primary" style="margin: 0 5px;">&laquo; Previous</a>
+                {{else}}
+                    <button class="btn btn-secondary" disabled style="margin: 0 5px;">&laquo; Previous</button>
+                {{/if}}
+
+                <span style="margin: 0 10px; line-height: 38px;">Page {{pagination.currentPage}} of {{pagination.totalPages}}</span>
+
+                {{#if pagination.hasNext}}
+                    <a href="?page={{increment pagination.currentPage}}" style="margin: 0 5px;" class="btn btn-primary">Next &raquo;</a>
+                {{else}}
+                    <button class="btn btn-secondary" disabled style="margin: 0 5px;">Next &raquo;</button>
+                {{/if}}
+            </nav>
+
+
+            {{#each transactions}}
+                <ul class="transaction">
+                    <li><strong>Date: </strong>{{timestamp}}</li>
+                    <li><strong>ID: </strong>{{id}}</li>
+                    <li><strong>Amount: </strong>£{{amount}}</li>
+                    <li><strong>From: </strong>{{from}}</li>
+                    <li><strong>To: </strong>{{to}}</li>
+                    <li><strong>Type: </strong>{{type}}</li>
+                    <li><strong>Status: </strong>{{#if status}}Accepted{{else}}Declined{{/if}}</li>
+                </ul>
+            {{/each}}
+        </div>
+    {{/if}}
+        <!-- First Insights Section -->
+        <div class="insights-section" id="payments-by-category">
+            <h2>Spending Insights: Number of Payments</h2>
+            <hr>
+            <div class="insights-container">
+                <div class="insight-card">
+                    <h3>Number of Payments per Business Category</h3>
+                    <div class="category-container">
+                        {{#if businesscounts}}
+                            <div class="category-list-container">
+                                <div class="category-list">
+                                    {{#each businesscounts}}
+                                        <ul class="category-item">
+                                            <li class="category-name">{{category}}:</li>
+                                            <li class="category-count">{{count}}</li>
+                                        </ul>
+                                    {{/each}}
+                                </div>
+                                <div class="chart-container">
+                                    <canvas id="business-account-chart"></canvas>
+                                </div>
+                            </div>
+                        {{else}}
+                            <p>No business categories found.</p>
+                        {{/if}}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Second Insights Section -->
+        <div class="insights-section" id="payments-sum-by-category">
+            <h2>Spending Insights: Sum of Payments</h2>
+            <hr>
+            <div class="insights-container">
+                <div class="insight-card">
+                    <h3>Sum of Payments per Business Category</h3>
+                    <div class="category-container">
+                        {{#if businesssums}}
+                            <div class="category-list-container">
+                                <div class="category-list">
+                                    {{#each businesssums}}
+                                        <ul class="category-item">
+                                            <li class="category-name">{{category}}:</li>
+                                            <li class="category-sum">£{{totalAmount}}</li>
+                                        </ul>
+                                    {{/each}}
+                                </div>
+                                <div class="chart-container">
+                                    <canvas id="business-sum-chart"></canvas>
+                                </div>
+                            </div>
+                        {{else}}
+                            <p>No business categories found.</p>
+                        {{/if}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    // Smooth scroll function without updating URL
+    function scrollToInsights() {
+        const insightsSection = document.getElementById('payments-by-category');
+        if (insightsSection) {
+            insightsSection.scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+
+    // Animation + Functionality for roundUpToggle switch & reclaim savings
+    document.addEventListener('DOMContentLoaded', function () {
+        const toggle = document.getElementById('roundUpToggle');
+        const statusText = document.querySelector('.toggle-status');
+        const reclaimContainer = document.getElementById('reclaimContainer');
+        const reclaimButton = document.getElementById('reclaimButton');
+
+        // Initial setup based on server-side state
+        if (toggle && statusText  && reclaimContainer) {
+            // Initialize toggle status display
+            const initialEnabled = toggle.checked;
+            statusText.textContent = initialEnabled ? 'Enabled' : 'Disabled';
+            statusText.style.backgroundColor = initialEnabled ?
+                'rgba(0, 255, 0, 0.2)' :
+                'rgba(255, 255, 255, 0.2)';
+
+            // Initialize reclaim button visibility
+
+            reclaimContainer.classList.toggle('visible', initialEnabled);
+        }
+
+        // Toggle switch handler
+        if (toggle && statusText && reclaimContainer) {
+            toggle.addEventListener('change', async function() {
+                const isEnabled = this.checked;
+
+                try {
+                    // Update server
+                    const response = await fetch(isEnabled ? '/account/roundup' : '/account/roundupoff', {
+                        method: 'POST'
+                    });
+
+                    if (!response.ok) throw new Error('Update failed');
+
+                    // Update UI
+                    statusText.textContent = isEnabled ? 'Enabled' : 'Disabled';
+                    statusText.style.backgroundColor = isEnabled
+                        ? 'rgba(0, 255, 0, 0.2)'
+                        : 'rgba(255, 255, 255, 0.2)';
+                    reclaimContainer.classList.toggle('visible', isEnabled);
+
+                } catch (error) {
+                    console.error('Toggle error:', error);
+                    this.checked = !isEnabled; // Revert toggle
+                    alert('Failed to update round-up status');
+                }
+            });
+        }
+
+        // Reclaim button handler
+        if (reclaimButton) {
+            reclaimButton.addEventListener('click', async function() {
+                const button = this;
+
+                try {
+                    // Disable button during processing
+                    button.disabled = true;
+                    button.innerHTML = `<span class="sparkle">✨</span> Reclaiming... <span class="sparkle">✨</span>`;
+
+                    // Call backend
+                    const response = await fetch('/account/reclaim', {
+                        method: 'POST'
+                    });
+
+                    if (!response.ok) throw new Error('Reclaim failed');
+
+                    // Update balances
+                    const data = await response.json();
+                    document.querySelector('.balance').textContent = `£${data.newBalance}`;
+                    document.querySelector('.roundup-balance').textContent = `£${data.newRoundUp}`;
+
+                    // Visual feedback
+                    button.innerHTML = `<span class="sparkle">✨</span> Reclaimed! <span class="sparkle">✨</span>`;
+
+                } catch (error) {
+                    console.error('Reclaim error:', error);
+                    button.innerHTML = `<span class="sparkle">❌</span> Failed <span class="sparkle">❌</span>`;
+                } finally {
+                    setTimeout(() => {
+                        button.innerHTML = `<span class="sparkle">✨</span> Reclaim Round-Up <span class="sparkle">✨</span>`;
+                        button.disabled = false;
+                    }, 2000);
+                }
+            });
+        }
+    });
+</script>
+</html>

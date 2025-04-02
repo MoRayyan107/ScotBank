@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deposit</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+
+<body>
+<div class="content-wrapper transaction-form">
+
+    <h1>Deposit Money</h1>
+
+    <form action="/account/deposit/process" method="post">
+        <div>
+            <label for="depositamount">Amount: </label>
+            <input type="number" id="depositamount" name="depositamount" step="0.01" required>
+        </div>
+        <input type="submit" value="Deposit">
+    </form>
+
+    <p>Current Balance: <strong>£{{balance}}</strong></p>
+
+    {{#if error}}
+        <p style="color: red;">{{error}}</p>
+    {{/if}}
+
+<nav>
+    <a href="/">Back to Dashboard</a>
+</nav>
+</div>
+</body>
+</html>
