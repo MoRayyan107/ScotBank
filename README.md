@@ -16,7 +16,7 @@ A bank project for CS217 - Agile Software Engineering in Practice
 
 ## Interactive Map using Google Maps API
 To use the embedded interactive Google Maps view on the manager dashboard, you will need an API key. You can create one
-yourself, or ask [Peter Tasker](mailto:peter.tasker.2023@uni.strath.ac.uk) very nicely for one.
+yourself, or ask [Mohammad Rayyan](mailto:mohammad.adhoni.2023@uni.strath.ac.uk) very nicely for one.
 
 Once you have the key, you will need to create an environment variable with the name `API_MAPS_KEY`. This will last for 
 your session.
