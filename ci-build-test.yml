@@ -1,0 +1,12 @@
+image: maven:3-eclipse-temurin-21
+
+stages:
+  - build
+
+build_and_test:
+  stage: build
+  script:
+    - mvn clean verify
+  artifacts:
+    paths:
+      - target/
